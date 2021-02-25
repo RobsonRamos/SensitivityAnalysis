@@ -2,6 +2,7 @@ investpy
 datetime
 pandas
 numpy
+scikit-learn
 Flask
 flask-restful
 flask-cors
