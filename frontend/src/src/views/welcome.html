@@ -1,0 +1,138 @@
+<template> 
+    <require from="./components/attributes/moneyMask"></require>
+    <require from="./components/valueConverters/moneyValueConverter"></require>
+    <style>
+        #htmlTable > table  {
+            width: 100%;
+        }
+
+        #htmlTable > table > thead > tr > th {
+            text-align : center;
+            font-weight:lighter;
+            font-size: medium;
+        }
+        
+        #htmlTable > table > tbody > tr > th  {
+            text-align : center;
+            font-weight:lighter;
+            font-size: medium;
+        }
+        
+        #htmlTable > table > tbody > tr > td  {
+            padding: 5px;
+            text-align: center;
+        }
+    </style>
+    <div class="row mb-5 au-animate">
+        <div class="col-md-12"> 
+            <div class="row mb-5" >
+                <div class="col-md-6">
+                    <div class="card ">
+                        <div class="card-header">
+                            Fourth Sail Capital - Sensitivity analysis
+                        </div>  
+                        <div class="card-body">
+                            <div class="row pb-12">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label class="control-label active">(%) change for Gold commodity</label>
+                                        <input type="text" class="form-control text-right" autocomplete="off" placeholder="00.00" value.bind="pctChangeGold | money" money>
+                                    
+                                        <label class="control-label active">(%) change for Copper commodity</label>                         
+                                        <input type="text" class="form-control text-right" autocomplete="off" placeholder="00.00" value.bind="pctChangeCopper  | money" money >
+                                    </div>  
+                                </div>
+                            </div> 
+                            <div class="row"> 
+                                <button type="button" class="btn btn-success mx-auto waves-effect waves-light" click.trigger="calculate()">Calculate P/E variations</button>
+                            </div>        
+                        </div>
+                    </div>      
+                </div> 
+                <div class="col-md-6" if.bind="result">
+                    <div class="card ">
+                        <div class="card-header">
+                            Metrics
+                        </div>  
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label class="control-label col-md-6">Intercept:</label> 
+                                <label class="control-label col-md-6 float-right">
+                                    ${metrics.intercept}
+                                    <i class="fa fa-arrow-up" style="color: #0ad251 !important" if.bind="metrics.intercept > 0" aria-hidden="true"></i>
+                                    <i class="fa fa-arrow-down" style="color: #f43a59 !important" if.bind="metrics.intercept < 0" aria-hidden="true"></i>
+                                </label> 
+                                
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-6">Coefficient Gold:</label> 
+                                <label class="control-label col-md-6 float-right">
+                                    ${metrics.coefficientGold}
+                                    <i class="fa fa-arrow-up" style="color: #0ad251 !important" if.bind="metrics.coefficientGold > 0" aria-hidden="true"></i>
+                                    <i class="fa fa-arrow-down" style="color: #f43a59 !important" if.bind="metrics.coefficientGold < 0" aria-hidden="true"></i>
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-6">Coefficient Copper:</label> 
+                                <label class="control-label col-md-6 float-right">
+                                    ${metrics.coefficientCopper}
+                                    <i class="fa fa-arrow-up" style="color: #0ad251 !important" if.bind="metrics.coefficientCopper > 0" aria-hidden="true"></i>
+                                    <i class="fa fa-arrow-down" style="color: #f43a59 !important" if.bind="metrics.coefficientCopper < 0" aria-hidden="true"></i>
+                                </label>
+                            </div> 
+                            <div class="form-group">
+                                <label class="control-label col-md-6">Last Barrick price:</label> 
+                                <label class="control-label col-md-6 float-right">${metrics.lastBarrickPrice}</label>
+                            </div> 
+                            <div class="form-group">
+                                <label class="control-label col-md-6">Barrick P/E:</label> 
+                                <label class="control-label col-md-6 float-right">${metrics.pe}</label>
+                            </div> 
+                            <div class="form-group">
+                                <label class="control-label col-md-6">Barrick EPS:</label> 
+                                <label class="control-label col-md-6 float-right">${metrics.eps}</label>
+                            </div> 
+                            <div class="form-group">
+                                <label class="control-label col-md-6">Last Gold price:</label> 
+                                <label class="control-label col-md-6 float-right">${metrics.lastGoldPrice}</label>
+                            </div> 
+                            <div class="form-group">
+                                <label class="control-label col-md-6">Last Copper price:</label> 
+                                <label class="control-label col-md-6 float-right">${metrics.lastCopperPrice}</label>
+                            </div> 
+                        </div>
+                    </div>      
+                </div> 
+            </div>
+            <div class="row mb-5" if.bind="result">
+                <div class="col-md-12">
+                    <div class="card ">
+                        <div class="card-header"> 
+                            Sensitivity Result
+                        </div>  
+                        <div class="card-body">    
+                            <div id="htmlTable" innerhtml.bind="result"></div>     
+                        </div>
+                    </div>      
+                </div> 
+            </div>  
+            <div class="row mb-5 ${ ! result ? 'invisible' : '' }"> 
+                <div class="col-md-12">
+                    <div class="card card-md" style="height: 100%;">
+                        <div class="card-header">
+                            Predicted Values
+                        </div>
+                        <div class="card-body text-center">
+                            <span class="fa-5x" style="position: absolute; top: 20%;left: 50%;" if.bind="isLoading">
+                                <i class="fa fa-refresh fa-spin"></i>
+                            </span>
+                            <div class="card-chart">
+                                <canvas id="predictedValuesChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div> 
+    </div> 
+</template>        

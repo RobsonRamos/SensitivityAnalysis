@@ -1,0 +1,7 @@
+investpy
+datetime
+pandas
+numpy
+Flask
+flask-restful
+flask-cors
