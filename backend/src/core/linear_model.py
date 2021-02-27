@@ -11,7 +11,6 @@ class Singleton(type):
         return cls._instances[cls]
 
 class LinearModel(metaclass=Singleton):
-    _instance = None
 
     def __init__(self):
         self.reg = linear_model.LinearRegression()
@@ -57,6 +56,7 @@ class LinearModel(metaclass=Singleton):
                     column_values.append(str(pct_change_gold) + '%') 
 
                 price_gold = self.df['Gold'][-1] * ( 1 + pct_change_gold / 100)    
+                
                 predicted_value = self.reg.predict([[price_gold, price_copper]])[0] 
                 predicted_values[len(index_values) -1][count_columns] = float("{:.2f}".format(predicted_value / self.stock_info['EPS'][0]))
                 count_columns = count_columns + 1

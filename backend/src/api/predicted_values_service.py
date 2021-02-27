@@ -22,9 +22,6 @@ class PredictedValuesService(Resource):
             return Response(response=json.dumps(result),
                             status=200,
                             mimetype='application/json')
-            #else:
-            #    return Response(response="The field cnpj are required", status=400)
-         
         except:
             traceback.print_exc()
             return Response(response="Internal server error", status=500)  
