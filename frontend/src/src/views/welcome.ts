@@ -19,6 +19,7 @@ export class Welcome{
     result                                  : any;
     metrics                                 : any;
     predictedValues                         : any;
+    predictedReturns                        : any;
     
     constructor( 
         private config                      : Config,
@@ -37,6 +38,7 @@ export class Welcome{
         window.setTimeout(() => ScriptRunner.runScript(), 10);
         this.loadMetrics();
         this.loadPredictedValues();
+        this.loadPredictedReturns();
     }
 
     activate(params){ 
@@ -55,6 +57,34 @@ export class Welcome{
                      .then(response=> response.json())
                      .then(data=> this.predictedValues = data) 
                      .then(_ => this.drawPredictedValues())
+                     .catch( (e) => {
+                         console.log(e);
+                         return Promise.resolve(e.json().then( error => {
+                             throw error;
+                         }));
+                     });
+
+    }
+    
+    loadPredictedReturns(){  
+         
+        return this.client
+                     .fetch('predictedReturnsService', { method: 'GET'} )  
+                     .then(response => {      
+                         if(response.status != 200){
+                             throw "Error";
+                         }           
+                         return response;
+                     }) 
+                     .then(response=> {
+                         debugger;
+                         return response.json()
+                     })
+                     .then(data=> {
+                         debugger;
+                         this.predictedReturns = data;
+                     }) 
+                     .then(_ => this.drawPredictedReturns())
                      .catch( (e) => {
                          console.log(e);
                          return Promise.resolve(e.json().then( error => {
@@ -165,7 +195,7 @@ export class Welcome{
 		var lineChartData = {
 			labels: this.predictedValues.indexValues,
 			datasets: [{
-				label: 'Predicted Values',
+				label: 'Predicted Prices',
 				borderColor: 'red',
 				backgroundColor: 'red',
 				fill: false,
@@ -182,6 +212,60 @@ export class Welcome{
 		};
  
 			var ctx = ( <any> document.getElementById('predictedValuesChart')).getContext('2d');
+			Chart.Line(ctx, {
+				data: lineChartData,
+				options: {
+					responsive: true,
+					hoverMode: 'index',
+					stacked: false,
+					title: {
+						display: false
+					},
+					scales: {
+						yAxes: [{
+							type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
+							display: true,
+							position: 'left',
+							id: 'y-axis-1',
+						}, {
+							type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
+							display: true,
+							position: 'right',
+							id: 'y-axis-2',
+
+							// grid line settings
+							gridLines: {
+								drawOnChartArea: false, // only want the grid lines for one axis to show up
+							},
+						}],
+					}
+				}
+			}); 
+	
+    }
+
+    drawPredictedReturns(){
+
+		var lineChartData = {
+			labels: this.predictedReturns.indexValues,
+			datasets: [{
+				label: 'Predicted Returns',
+				borderColor: 'red',
+				backgroundColor: 'red',
+				fill: false,
+				data: this.predictedReturns.predictedReturns,
+				yAxisID: 'y-axis-1',
+			}, {
+				label: 'Barrick Returns',
+				borderColor: 'blue',
+				backgroundColor: 'blue',
+				fill: false,
+				data: this.predictedReturns.returns,
+				yAxisID: 'y-axis-2'
+			}]
+		};
+ 
+			var ctx = ( <any> document.getElementById('predictedReturnsChart')).getContext('2d');
 			Chart.Line(ctx, {
 				data: lineChartData,
 				options: {

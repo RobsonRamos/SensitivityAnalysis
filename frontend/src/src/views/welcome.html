@@ -129,7 +129,24 @@
                             <div class="card-chart">
                                 <canvas id="predictedValuesChart"></canvas>
                             </div>
+                        </div> 
+                    </div>
+                </div>
+            </div> 
+            <div class="row mb-5 ${ ! result ? 'invisible' : '' }"> 
+                <div class="col-md-12">
+                    <div class="card card-md" style="height: 100%;">
+                        <div class="card-header">
+                            Predicted Returns
                         </div>
+                        <div class="card-body text-center">
+                            <span class="fa-5x" style="position: absolute; top: 20%;left: 50%;" if.bind="isLoading">
+                                <i class="fa fa-refresh fa-spin"></i>
+                            </span>
+                            <div class="card-chart">
+                                <canvas id="predictedReturnsChart"></canvas>
+                            </div>
+                        </div> 
                     </div>
                 </div>
             </div>
