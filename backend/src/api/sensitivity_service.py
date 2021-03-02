@@ -17,8 +17,6 @@ class SensitivityService(Resource):
             return Response(response=json.dumps(result.to_html()),
                             status=200,
                             mimetype='application/json')
-            #else:
-            #    return Response(response="The field cnpj are required", status=400)
          
         except:
             traceback.print_exc()

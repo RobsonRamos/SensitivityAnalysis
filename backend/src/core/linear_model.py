@@ -1,6 +1,7 @@
 from sklearn import linear_model 
+from sklearn.metrics import r2_score
 import pandas as pd
-import numpy as np
+import numpy as np 
 
 class Singleton(type):
     _instances = {}
@@ -31,7 +32,14 @@ class LinearModel(metaclass=Singleton):
         predicted = []
         for _, row in x.iterrows():  
             predicted.append(self.reg.predict([[row['Gold'], row['Copper']]])[0])
-        self.df['Predicted'] = predicted         
+
+        self.df['Predicted'] = predicted  
+        self.df['PredictedReturn'] =  (self.df['Predicted'] / self.df['Predicted'].shift(1) ) - 1 
+        self.df['Return'] =  (self.df['Barrick'] / self.df['Barrick'].shift(1) ) - 1 
+        
+        r2 = r2_score(self.df["Barrick"],predicted)      
+        number_of_preditors = 2  
+        self.adjusted_r2 = 1-(1-r2)*( len(predicted) -1)/(len(predicted) -(number_of_preditors) -1) 
         
     def predict(self, shift_gold, shift_copper):
         shift_gold = abs(shift_gold)

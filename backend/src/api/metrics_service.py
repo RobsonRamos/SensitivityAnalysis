@@ -10,7 +10,7 @@ class MetricsService(Resource):
 
         try:
             model = LinearModel()
-            result = {}
+            
             result = {
                 "intercept" : model.reg.intercept_,
                 "coefficientGold" :  model.reg.coef_[0],
@@ -19,7 +19,8 @@ class MetricsService(Resource):
                 "lastGoldPrice" : model.df['Gold'][-1],
                 "lastCopperPrice" : model.df['Copper'][-1],
                 "eps" : model.stock_info['EPS'][0],
-                "pe" : "{:.2f}".format(model.df['Barrick'][-1] / model.stock_info['EPS'][0])
+                "pe" : "{:.2f}".format(model.df['Barrick'][-1] / model.stock_info['EPS'][0]),
+                "adjustedR2" : model.adjusted_r2
             }
             return Response(response=json.dumps(result),
                             status=200,

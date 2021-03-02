@@ -5,6 +5,7 @@ from datetime import datetime
 from src.api.sensitivity_service import SensitivityService
 from src.api.metrics_service import MetricsService 
 from src.api.predicted_values_service import PredictedValuesService 
+from src.api.predicted_returns_service import PredictedReturnsService 
 from flask_cors import CORS, cross_origin
 
 class Startup: 
@@ -15,4 +16,5 @@ class Startup:
                 api.add_resource(SensitivityService, '/sensitivityService')
                 api.add_resource(MetricsService, '/metricsService')
                 api.add_resource(PredictedValuesService, '/predictedValuesService')
+                api.add_resource(PredictedReturnsService, '/predictedReturnsService')
                 app.run(debug=False, port=5000, host='0.0.0.0') 
